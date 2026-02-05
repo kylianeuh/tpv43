@@ -72,6 +72,9 @@ class Ebay{
 		if($category == "Cassettes audio" && $this->globalId == "EBAY-FR") {
 			$categoryId = 176983 ; // Livres EBAY-FR
 		}
+		if($category == "Films" && $this->globalId == "EBAY-FR") {
+			$categoryId = 617 ; // Films EBAY-FR
+		}
 		
 		return $categoryId;
 	}

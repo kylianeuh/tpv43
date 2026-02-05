@@ -9,6 +9,7 @@ use GuzzleHttp\Client;
 
 use App\Entity\Catalogue\Livre;
 use App\Entity\Catalogue\Musique;
+use App\Entity\Catalogue\Film;
 use App\Entity\Catalogue\Piste;
 
 use Psr\Log\LoggerInterface;
@@ -28,10 +29,10 @@ class AppFixtures extends Fixture
 			$ebay = new Ebay($this->logger);
 			//$ebay->setCategory('CDs');
 			//$keywords = 'Ibrahim Maalouf' ;
-			$ebay->setCategory('Livres');
-			$keywords = 'Harry Potter' ;
+			$ebay->setCategory('Films');
+			$keywords = 'avatar' ;
 
-			$itemSummaries = $ebay->searchItemSummaries($keywords, 6);
+			$itemSummaries = $ebay->searchItemSummaries($keywords, 20);
 			
 			if ($itemSummaries !== false) {
 				foreach ($itemSummaries as $itemSummary) {
@@ -49,6 +50,21 @@ class AppFixtures extends Fixture
 						$entityLivre->setDisponibilite(1);
 						$entityLivre->setImage($itemSummary["image"]["imageUrl"]);
 						$manager->persist($entityLivre);
+						$manager->flush();
+					}
+					if ($ebay->categoryInCategories('Films', $itemSummary["categories"])) {
+						$entityFilm = new Film();
+						$entityFilm->setId((int) $id);
+						$entityFilm->setTitre($itemSummary["title"]);
+						$entityFilm->setRealisateur($ebay->getItem("realisateur", $id));
+						$entityFilm->setIdTMDB( $ebay->getItem("ID TMDB", $id));
+						$dureeValue = $ebay->getItem("durée du film", $id);
+						$entityFilm->setDuree($dureeValue !== null ? (int) $dureeValue : null);
+						$entityFilm->setDateDePublication( $ebay->getItem("Année de publication", $id));
+						$entityFilm->setPrix((float) $itemSummary["price"]["value"]);
+						$entityFilm->setDisponibilite(1);
+						$entityFilm->setImage($itemSummary["image"]["imageUrl"]);
+						$manager->persist($entityFilm);
 						$manager->flush();
 					}
 					if ($ebay->categoryInCategories('CDs', $itemSummary["categories"])) {

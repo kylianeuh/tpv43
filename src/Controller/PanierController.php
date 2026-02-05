@@ -43,6 +43,17 @@ class PanierController extends AbstractController
             'panier' => $this->panier,
         ]);
     }
+
+	//TEST
+	
+	#[Route('/pageProduit', name: 'pageProduit')]
+    public function accederPageProduit(Request $request): Response
+    {
+		$session = $request->getSession() ;
+		return $this->render('article.html.twig', [
+
+        ]);
+    }
 	
     #[Route('/supprimerLigne', name: 'supprimerLigne')]
     public function supprimerLigneAction(Request $request): Response
